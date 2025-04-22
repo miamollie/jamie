@@ -3,9 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="image/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="image/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="image/favicon-16x16.png"
+    />
     <link rel="manifest" href="image/site.webmanifest" />
     <title>You're Invited – 40th Birthday Bash</title>
     <link
@@ -151,6 +165,7 @@
             >The Station Hotel, Footscray</a
           >
         </p>
+        <p class="info">Bring the whole family along, no gifts required</p>
         <p class="info">RSVP by July 1st to 0411 595 882</p>
       </main>
     </div>
@@ -234,17 +249,43 @@
         confettiPieces.push(piece);
       }
 
-      document.addEventListener("mousemove", (e) => {
-        const mouseX = e.clientX / window.innerWidth - 0.5;
-        const mouseY = e.clientY / window.innerHeight - 0.5;
+      const isTouchDevice =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
-        confettiPieces.forEach((piece) => {
-          const speed = parseFloat(piece.dataset.speed);
-          const xOffset = mouseX * speed * 20;
-          const yOffset = mouseY * speed * 20;
-          piece.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+      if (!isTouchDevice) {
+        // Desktop: parallax on mousemove
+        document.addEventListener("mousemove", (e) => {
+          const mouseX = e.clientX / window.innerWidth - 0.5;
+          const mouseY = e.clientY / window.innerHeight - 0.5;
+
+          confettiPieces.forEach((piece) => {
+            const speed = parseFloat(piece.dataset.speed);
+            const xOffset = mouseX * speed * 20;
+            const yOffset = mouseY * speed * 20;
+            piece.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+          });
         });
-      });
+      } else {
+        // Mobile: gentle float animation
+        confettiPieces.forEach((piece, i) => {
+          const floatX = Math.random() * 10 - 5;
+          const floatY = Math.random() * 10 - 5;
+          piece.animate(
+            [
+              { transform: `translate(0, 0)` },
+              { transform: `translate(${floatX}px, ${floatY}px)` },
+              { transform: `translate(0, 0)` },
+            ],
+            {
+              duration: 6000 + Math.random() * 2000,
+              iterations: Infinity,
+              direction: "alternate",
+              easing: "ease-in-out",
+              delay: i * 50,
+            }
+          );
+        });
+      }
     </script>
   </body>
 </html>
